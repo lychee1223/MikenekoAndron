@@ -19,7 +19,7 @@ export default function Login() {
     event.preventDefault()
 
     const formData = new FormData(event.currentTarget)
-    const res = await fetch('http://localhost:8000/token', {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/token`, {
       method: 'POST',
       body: formData,
     })

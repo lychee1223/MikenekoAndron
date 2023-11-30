@@ -14,11 +14,14 @@ export default function Home() {
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem('token')
-      const res = await fetch('http://localhost:8000/users/me', {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_HOST}/users/me`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      })
+      )
       if (!res.ok) {
         router.push('/login')
         return
