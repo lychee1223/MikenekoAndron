@@ -1,4 +1,4 @@
-import { Button, Heading, Stack } from '@chakra-ui/react'
+import { Button, Heading, Spinner, Stack } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
@@ -38,7 +38,11 @@ export default function Home() {
   }
 
   if (!user) {
-    return <div>Loading...</div>
+    return (
+      <Stack align="center" justify="center" h="100vh">
+        <Spinner size="xl" />
+      </Stack>
+    )
   }
 
   return (
