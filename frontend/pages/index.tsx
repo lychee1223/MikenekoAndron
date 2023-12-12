@@ -1,4 +1,4 @@
-import { Button, Flex, Stack, Text } from '@chakra-ui/react'
+import { Button, Heading, Spinner, Stack } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
@@ -14,19 +14,20 @@ export default function Home() {
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem('token')
-      if (!token) {
-        router.push('/login')
-      }
-
-      const res = await fetch('http://localhost:8000/users/me', {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_HOST}/users/me`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      })
-      if (res.ok) {
-        const user = await res.json()
-        setUser(user)
+      )
+      if (!res.ok) {
+        router.push('/login')
+        return
       }
+      const user = await res.json()
+      setUser(user)
     }
     fetchUser()
   }, [router])
@@ -37,17 +38,19 @@ export default function Home() {
   }
 
   if (!user) {
-    return <div>Loading...</div>
+    return (
+      <Stack align="center" justify="center" h="100vh">
+        <Spinner size="xl" />
+      </Stack>
+    )
   }
 
   return (
-    <Flex align="center" justify="center" h="100vh">
-      <Stack>
-        <Text>Hello, {user.username}!</Text>
-        <Button onClick={logout} colorScheme="blue">
-          Logout
-        </Button>
-      </Stack>
-    </Flex>
+    <Stack align="center" justify="center" h="100vh">
+      <Heading>Hello, {user.username}!</Heading>
+      <Button onClick={logout} colorScheme="blue">
+        Logout
+      </Button>
+    </Stack>
   )
 }

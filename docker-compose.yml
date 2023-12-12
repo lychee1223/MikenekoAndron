@@ -7,14 +7,17 @@ services:
     command: npm run dev
     ports:
       - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_BACKEND_HOST=http://localhost:8000
 
   backend:
     build: ./backend
     volumes:
       - ./backend:/backend
-    command: uvicorn main:app --reload --host 0.0.0.0
     ports:
       - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
     depends_on:
       - db
 
