@@ -1,4 +1,5 @@
 import { Button, Heading, Spinner, Stack } from '@chakra-ui/react'
+import Cookies from 'js-cookie'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
@@ -13,12 +14,12 @@ export default function Home() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = localStorage.getItem('token')
+      const accessToken = Cookies.get('access_token')
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_HOST}/users/me`,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         },
       )
@@ -33,7 +34,7 @@ export default function Home() {
   }, [router])
 
   const logout = () => {
-    localStorage.removeItem('token')
+    Cookies.remove('access_token')
     router.push('/login')
   }
 
