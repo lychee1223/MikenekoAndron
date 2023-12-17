@@ -8,6 +8,7 @@ import {
   Input,
   Stack,
 } from '@chakra-ui/react'
+import Cookies from 'js-cookie'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 
@@ -28,7 +29,7 @@ export default function Login() {
       return
     }
     const token = await res.json()
-    localStorage.setItem('token', token.access_token)
+    Cookies.set('access_token', token.access_token)
     router.push('/')
   }
 
