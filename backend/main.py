@@ -6,13 +6,10 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 import crud
-import models
 import schemas
-from database import engine, get_db
+from database import get_db
 from security import (ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user,
                       create_access_token, get_current_user)
-
-models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
