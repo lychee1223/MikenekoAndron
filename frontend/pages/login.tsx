@@ -15,10 +15,13 @@ import { useState } from 'react'
 
 export default function Login() {
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   const login = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+
+    setIsLoading(true)
 
     const formData = new FormData(event.currentTarget)
     const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/token`, {
@@ -28,6 +31,7 @@ export default function Login() {
     if (!res.ok) {
       const error = await res.json()
       setErrorMessage(error.detail)
+      setIsLoading(false)
       return
     }
     const token = await res.json()
@@ -61,7 +65,7 @@ export default function Login() {
               onChange={() => setErrorMessage('')}
             />
           </FormControl>
-          <Button type="submit" colorScheme="blue">
+          <Button type="submit" colorScheme="blue" isLoading={isLoading}>
             ログイン
           </Button>
         </Stack>
