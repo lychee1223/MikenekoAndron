@@ -15,10 +15,13 @@ import { useState } from 'react'
 
 export default function Login() {
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 
   const signup = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+
+    setIsLoading(true)
 
     const target = event.target as typeof event.target & {
       username: { value: string }
@@ -37,6 +40,7 @@ export default function Login() {
     if (!res.ok) {
       const error = await res.json()
       setErrorMessage(error.detail)
+      setIsLoading(false)
       return
     }
 
@@ -77,7 +81,7 @@ export default function Login() {
               onChange={() => setErrorMessage('')}
             />
           </FormControl>
-          <Button type="submit" colorScheme="blue">
+          <Button type="submit" colorScheme="blue" isLoading={isLoading}>
             アカウントを作成
           </Button>
         </Stack>
