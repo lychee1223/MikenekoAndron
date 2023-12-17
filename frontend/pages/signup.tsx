@@ -17,27 +17,43 @@ export default function Login() {
   const router = useRouter()
   const [errorMessage, setErrorMessage] = useState('')
 
-  const login = async (event: React.FormEvent<HTMLFormElement>) => {
+  const signup = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    const formData = new FormData(event.currentTarget)
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/token`, {
+    const target = event.target as typeof event.target & {
+      username: { value: string }
+      password: { value: string }
+    }
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/users`, {
       method: 'POST',
-      body: formData,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: target.username.value,
+        password: target.password.value,
+      }),
     })
     if (!res.ok) {
       const error = await res.json()
       setErrorMessage(error.detail)
       return
     }
-    const token = await res.json()
+
+    const formData = new FormData()
+    formData.append('username', target.username.value)
+    formData.append('password', target.password.value)
+    const token = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/token`, {
+      method: 'POST',
+      body: formData,
+    }).then(res => res.json())
     Cookies.set('access_token', token.access_token)
     router.push('/')
   }
 
   return (
     <Stack align="center" justify="center" h="100vh">
-      <form onSubmit={login}>
+      <form onSubmit={signup}>
         <Stack w="md">
           {errorMessage && (
             <Alert status="error">
@@ -62,14 +78,14 @@ export default function Login() {
             />
           </FormControl>
           <Button type="submit" colorScheme="blue">
-            ログイン
+            アカウントを作成
           </Button>
         </Stack>
       </form>
       <Text>
-        アカウントをお持ちでない方は{' '}
-        <Link href="/signup" color="blue.500">
-          アカウントを作成
+        すでにアカウントをお持ちの方は{' '}
+        <Link href="/login" color="blue.500">
+          ログイン
         </Link>
       </Text>
     </Stack>
