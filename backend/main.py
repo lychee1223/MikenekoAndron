@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 import crud
 import schemas
-from database import get_db
+from db import get_db
 from security import (ACCESS_TOKEN_EXPIRE_MINUTES, authenticate_user,
                       create_access_token, get_current_user)
 
