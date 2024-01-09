@@ -20,9 +20,9 @@ export default function Login() {
 
   const login = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-
+    
     setIsLoading(true)
-
+    
     const formData = new FormData(event.currentTarget)
     const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/token`, {
       method: 'POST',
