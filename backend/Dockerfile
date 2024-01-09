@@ -7,5 +7,6 @@ ENV PATH="$POETRY_HOME/bin:$PATH"
 RUN curl -sSL https://install.python-poetry.org | python -
 RUN poetry config virtualenvs.create false
 RUN poetry install --no-dev
+RUN pip install markdown
 
 CMD alembic upgrade head && uvicorn main:app --reload --host 0.0.0.0
