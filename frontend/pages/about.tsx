@@ -90,7 +90,7 @@ export default function Home() {
                 {/* コンテンツ */}
                 <Box className={styles.content}>
                     {/* プロフィール */}
-                    <Box h="500px" bg={Theme.color.backgroundA}>
+                    <Box h="350px" bg={Theme.color.backgroundA}>
                         <HStack h="100%" spacing={20} >
                             <Image
                                 src="/img/icon.png"
