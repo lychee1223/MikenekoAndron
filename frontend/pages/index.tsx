@@ -38,11 +38,9 @@ export default function Home() {
                 },
             )
             if (!res.ok) {
-                // localStorage.removeItem('isLoggedIn')
                 setIsLoggedIn(false);
                 return
             }
-            // localStorage.setItem('isLoggedIn', 'true');
             setIsLoggedIn(true)
         }
         fetchUser()
@@ -63,15 +61,14 @@ export default function Home() {
 
                 {/* コンテンツ */}
                 <Box className={styles.content}>
-                    <Box h="500px" bg={Theme.color.backgroundA}>
+                    <Box h="350px" bg={Theme.color.backgroundA}>
                         <VStack h="100%" justify="center" spacing={0} >
-                            <Heading size="4xl">TAKURO KAWADA</Heading>
-                            <Heading>I AM AN ENGINEER</Heading>
+                            <Heading>TAKURO KAWADA</Heading>
                         </VStack>
                     </Box>
 
                     {/* ゲーム開発特集 */}
-                    <Box h="500px" p={4} bg={Theme.color.backgroundB}>
+                    <Box h="350px" p={4} bg={Theme.color.backgroundB}>
                         <HStack h="100%" spacing={0} >
                             {/* テキスト */}
                             <VStack h="100%" w="50%" spacing={3} justify="center">
@@ -102,7 +99,7 @@ export default function Home() {
                     </Box>
 
                     {/* 自然言語処理特集 */}
-                    <Box h="500px" bg={Theme.color.backgroundA}>
+                    <Box h="350px" bg={Theme.color.backgroundA}>
                         <HStack h="100%" spacing={0}>
                             {/* イメージ画像 */}
                             <VStack h="100%" w="50%" justify="center">

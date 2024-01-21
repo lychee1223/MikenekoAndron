@@ -27,10 +27,10 @@ def create_user(db: Session, user: schemas.UserCreate):
 #################################
 
 def get_articles(db: Session, skip: int = 0, limit: int = 30):
-    return db.query(models.Article).order_by(desc(models.Article.date)).offset(skip).limit(limit).all()
+    return db.query(models.Article).order_by(desc(models.Article.date), desc(models.Article.id)).offset(skip).limit(limit).all()
 
 def get_articles_by_tag(db: Session, tag: str, skip: int = 0, limit: int = 30):
-    return db.query(models.Article).filter(models.Article.tag == tag).order_by(desc(models.Article.date)).offset(skip).limit(limit).all()
+    return db.query(models.Article).filter(models.Article.tag == tag).order_by(desc(models.Article.date), desc(models.Article.id)).offset(skip).limit(limit).all()
 
 def get_article_by_id(db: Session, id: int):
     return db.query(models.Article).filter(models.Article.id == id).first()

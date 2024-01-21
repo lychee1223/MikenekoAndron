@@ -33,11 +33,9 @@ export default function Home() {
                 },
             )
             if (!res.ok) {
-                // localStorage.removeItem('isLoggedIn')
                 setIsLoggedIn(false);
                 return
             }
-            // localStorage.setItem('isLoggedIn', 'true');
             setIsLoggedIn(true)
         }
         fetchUser()

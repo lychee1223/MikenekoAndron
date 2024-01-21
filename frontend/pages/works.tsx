@@ -12,6 +12,7 @@ import {
     VStack,
     Heading,
     Text,
+    Divider,
     Tabs,
     TabList,
     Tab,
@@ -28,6 +29,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ArticleCard from "@/components/ArticleCard";
 import SlideShow from "@/components/SlideShow";
+import CreateArticleButton from '@/components/CreateArticleButton';
 
 type Image = {
     id: number
@@ -38,7 +40,7 @@ type Article = {
     id: number
     is_works: boolean
     tag: string
-    date: string
+    date: String
     title: string
     body: string
     images: Image[]
@@ -71,6 +73,8 @@ export default function Home() {
     //******************************************************/
     const router = useRouter()
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
+
     const [articles, setArticles] = useState<Article[]>([]);
 
     useEffect(() => {
@@ -89,7 +93,10 @@ export default function Home() {
                 setIsLoggedIn(false);
                 return
             }
+
             setIsLoggedIn(true)
+            const userData = await res.json();
+            setIsAdmin(userData.is_admin);
         }
 
         // 記事を取得
@@ -133,6 +140,9 @@ export default function Home() {
                                     </Tab>
                                 ))}
                             </TabList>
+                            <Divider
+                                boxShadow="0px 2px 4px rgba(0, 0, 0, 0.5)"
+                            />
                             {/* 作品一覧 */}
                             <TabPanels bg={Theme.color.backgroundB}>
                                 {/* ALL */}
@@ -141,15 +151,23 @@ export default function Home() {
                                         {articles.map((article, i) => (
                                             <Box onClick={() => handleChangePage(i)} key={article.id}>
                                                 <ArticleCard
-                                                    thumbnail_path={article.images[0].path}
+                                                    thumbnail_path={article.images.length > 0 ? article.images[0].path : undefined}
                                                     tag={article.tag}
                                                     tagColor={tagColorMap.get(article.tag)}
+                                                    date={article.date}
                                                     title={article.title}
                                                 />
                                             </Box>
                                         ))}
 
                                         {/* 空の要素 */}
+                                        <Box aspectRatio={1}></Box> 
+                                        <Box aspectRatio={1}></Box>
+                                        <Box aspectRatio={1}></Box>
+                                        <Box aspectRatio={1}></Box>
+                                        <Box aspectRatio={1}></Box>
+                                        <Box aspectRatio={1}></Box>
+                                        <Box aspectRatio={1}></Box>
                                         <Box aspectRatio={1}></Box>
                                         <Box aspectRatio={1}></Box>
                                         <Box aspectRatio={1}></Box>
@@ -168,9 +186,10 @@ export default function Home() {
                                                         return (
                                                             <Box onClick={() => handleChangePage(j)} key={article.id}>
                                                                 <ArticleCard
-                                                                    thumbnail_path={article.images[0].path}
+                                                                    thumbnail_path={article.images.length > 0 ? article.images[0].path : undefined}
                                                                     tag={article.tag}
                                                                     tagColor={color}
+                                                                    date={article.date}
                                                                     title={article.title}
                                                                 />
                                                             </Box>
@@ -180,6 +199,12 @@ export default function Home() {
                                             ))}
 
                                             {/* 空の要素 */}
+                                            <Box aspectRatio={1}></Box>
+                                            <Box aspectRatio={1}></Box>
+                                            <Box aspectRatio={1}></Box>
+                                            <Box aspectRatio={1}></Box>
+                                            <Box aspectRatio={1}></Box>
+                                            <Box aspectRatio={1}></Box>
                                             <Box aspectRatio={1}></Box>
                                             <Box aspectRatio={1}></Box>
                                             <Box aspectRatio={1}></Box>
@@ -212,23 +237,39 @@ export default function Home() {
                                 <CloseButton ml="auto" mb="auto" onClick={() => handleChangePage(-1)} />
                             </HStack>
                         </Box>
-                        <Box h="400px" p={4} bg={Theme.color.backgroundB}>
-                            <SlideShow imageList={articles[currentWorkPage].images} />
-                        </Box>
-                        <Box h="500px" p={4} bg={Theme.color.backgroundA}>
+                        <Divider
+                            boxShadow="0px 2px 4px rgba(0, 0, 0, 0.5)"
+                        />
+
+                        {articles[currentWorkPage].images.length > 0 &&
+                            <Box h="350px" p={4} bg={Theme.color.backgroundB}>
+                                <SlideShow imageList={articles[currentWorkPage].images} />
+                            </Box>
+                        }
+
+                        <Box h="350px" p={4} bg={Theme.color.backgroundA}>
                             <Box dangerouslySetInnerHTML={{ __html: articles[currentWorkPage].body }} />
                         </Box>
 
                         {/* コメント機能追加するよ */}
-                        <Box h="500px" p={4} bg={Theme.color.backgroundB}>
+                        <Box h="350px" p={4} bg={Theme.color.backgroundB}>
                             <HStack w="100%">
                                 aaa
                             </HStack>
                         </Box>
                     </Box>
                 }
+
                 {/* フッター */}
                 <Footer />
+
+                {/* 作品追加ボタン */}
+                {isLoggedIn && isAdmin && (
+                    <CreateArticleButton
+                        tagColorMap={tagColorMap}
+                        isWorks={true}
+                    />
+                )}
             </main>
         </>
     )

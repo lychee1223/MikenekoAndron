@@ -2,9 +2,12 @@ import {
     Alert,
     AlertIcon,
     Button,
+    IconButton,
     FormControl,
     FormLabel,
+    InputGroup,
     Input,
+    InputRightElement,
     Link,
     Stack,
     Text,
@@ -16,6 +19,7 @@ import {
     ModalCloseButton,
     useDisclosure,
 } from '@chakra-ui/react'
+import { FaEye, FaEyeSlash } from "react-icons/fa"
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -30,6 +34,7 @@ const Login = (props: any) =>{
 
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [isOpenLoginModal, setIsOpenLoginModal] = useState(true);
+    const [showPass, setShowPass] = React.useState(false)
 
     const initialRef =  React.useRef<HTMLInputElement>(null);
 
@@ -72,7 +77,7 @@ const Login = (props: any) =>{
         event.preventDefault()
 
         setIsLoading(true)
-
+        
         const target = event.target as typeof event.target & {
 			username: { value: string }
 			password: { value: string }
@@ -142,11 +147,21 @@ const Login = (props: any) =>{
                                     </FormControl>
                                     <FormControl isRequired>
                                         <FormLabel>Password</FormLabel>
-                                        <Input
-                                            type="password"
-                                            name="password"
-                                            onChange={() => setErrorMessage('')}
-                                        />
+                                        <InputGroup>
+                                            <Input
+                                                type={showPass ? 'text' : 'password'}
+                                                name="password"
+                                                onChange={() => setErrorMessage('')}
+                                            />
+                                            <InputRightElement>
+                                                <IconButton
+                                                    size="sm"
+                                                    aria-label="ShowPass"
+                                                    onClick={() => setShowPass(!showPass)}
+                                                    icon={showPass ? <FaEyeSlash /> : <FaEye />}
+                                                />
+                                            </InputRightElement>
+                                        </InputGroup>
                                     </FormControl>
                                     <Button type="submit" colorScheme={Theme.color.colorScheme} isLoading={isLoading}>
                                         ログイン
@@ -195,11 +210,21 @@ const Login = (props: any) =>{
                                     </FormControl>
                                     <FormControl isRequired>
                                         <FormLabel>Password</FormLabel>
-                                        <Input
-                                            type="password"
-                                            name="password"
-                                            onChange={() => setErrorMessage('')}
-                                        />
+                                        <InputGroup>
+                                            <Input
+                                                type={showPass ? 'text' : 'password'}
+                                                name="password"
+                                                onChange={() => setErrorMessage('')}
+                                            />
+                                            <InputRightElement>
+                                                <IconButton
+                                                    size="sm"
+                                                    aria-label="ShowPass"
+                                                    onClick={() => setShowPass(!showPass)}
+                                                    icon={showPass ? <FaEyeSlash /> : <FaEye />}
+                                                />
+                                            </InputRightElement>
+                                        </InputGroup>
                                     </FormControl>
                                     <Button type="submit" colorScheme={Theme.color.colorScheme} isLoading={isLoading}>
                                         アカウントを作成
