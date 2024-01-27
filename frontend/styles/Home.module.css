@@ -1,36 +1,8 @@
-/* 一般 */
 .main {
     background-image: url(/img/background.png);
     background-size: cover;
 }
 
-/* コンテンツ */
 .content {
     padding: 10px 10px 10px 10px;
-}
-
-/* styles/globals.css */
-
-/* .invisibleScroll2Top {
-    display: none;
-    position: fixed;
-    right: "15px";
-    bottom: "60px";
-}
-
-.visibleScroll2Top {
-    display: block;
-    position: fixed;
-    right: "15px";
-    bottom: "60px";
-} */
-
-/* フッターが表示されている場合のスタイル */
-
-/* フッターの上に固定するスタイル */
-.scroll2TopAtBottom {
-    display: block;
-    position: absolute;
-    right: "15px";
-    bottom: "110px";
 }

@@ -19,12 +19,12 @@ class Article(Base):
     date = Column(DateTime)
     title = Column(String)
     body = Column(Text)
-    images = relationship("Image", back_populates="article")
+    images = relationship("Image", back_populates="article", cascade="all, delete-orphan")
 
 class Image(Base):
     __tablename__ = "images"
     
     id = Column(Integer, primary_key=True, index=True)
-    path = Column(String, unique=True)
+    path = Column(String, unique=True, index=True)
     article_id = Column(Integer, ForeignKey('articles.id'))
     article = relationship("Article", back_populates="images")

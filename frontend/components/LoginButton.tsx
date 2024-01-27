@@ -113,7 +113,16 @@ const Login = (props: any) =>{
     return (
         <>
             {/* Modalを開くためのボタン */}
-            <Button onClick={onOpen} size='md' variant='outline' width='110px'>ログイン</Button>
+            <Button
+                onClick={onOpen}
+                size='md'
+                width='110px'
+                variant='outline'
+                _hover={{ bg: 'gray.200'}}
+                _active={{ filter: 'brightness(90%)' }}
+            >
+                ログイン
+            </Button>
             {isOpenLoginModal ? (
                 // ログインモーダル
                 <Modal

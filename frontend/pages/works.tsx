@@ -22,6 +22,7 @@ import {
     Tag,
     TagLabel,
     CloseButton,
+    IconButton,
 } from "@chakra-ui/react"
 
 import Theme from "@/components/Theme";
@@ -30,6 +31,8 @@ import Footer from "@/components/Footer";
 import ArticleCard from "@/components/ArticleCard";
 import SlideShow from "@/components/SlideShow";
 import CreateArticleButton from '@/components/CreateArticleButton';
+import DeleteArticleButton from "@/components/DeleteArticleButton";
+import EditArticleButton from "@/components/EditArticleButton";
 
 type Image = {
     id: number
@@ -47,28 +50,17 @@ type Article = {
 }
 
 export default function Home() {
-    const TAG_COLOR = {
-        unity : "red",
-        ue : "messenger",
-        ai : "green"
-    }
-
     const tagColorMap = new Map<string, string>();
     tagColorMap.set('Unity', 'red');
     tagColorMap.set('UE', 'messenger');
     tagColorMap.set('AI', 'green');
 
     // 現在適用しているフィルタ
-    const [currentFilterTag, setCurrentFilterTag] = useState(0);
-    const handleChangeFilter = (filterID: React.SetStateAction<number>) => {
-        setCurrentFilterTag(filterID);
-    };
+    const [filteringTag, setFilteringTag] = useState(0);
 
     // 現在表示している作品詳細ページ(-1は作品一覧ページ)
-    const [currentWorkPage, setCurrentWorkPage] = useState(-1);
-    const handleChangePage = (pageID: React.SetStateAction<number>) => {
-        setCurrentWorkPage(pageID);
-    };
+    const [selectedArticleIndex, setSelectedArticleIndex] = useState(-1);
+
 
     //******************************************************/
     const router = useRouter()
@@ -101,7 +93,7 @@ export default function Home() {
 
         // 記事を取得
         const getArticles = async () =>{
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/articles`)
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/articles?is_works=true`)
             if (!res.ok) {
                 return
             }
@@ -127,15 +119,15 @@ export default function Home() {
                 {/* コンテンツ */}
                 {/* 作品パネル一覧 */}
                 {
-                    currentWorkPage == -1 &&
+                    selectedArticleIndex == -1 &&
 
                     <Box className={styles.content}>
-                        <Tabs colorScheme={Theme.color.colorScheme} defaultIndex={currentFilterTag}>
+                        <Tabs colorScheme={Theme.color.colorScheme} defaultIndex={filteringTag}>
                             {/* フィルタ選択タブ */}
                             <TabList bg={Theme.color.backgroundA}>
-                                <Tab onClick={() => handleChangeFilter(0)}>ALL</Tab>
+                                <Tab onClick={() => setFilteringTag(0)}>ALL</Tab>
                                 {Array.from(tagColorMap.entries()).map(([tag, color], i) => (
-                                    <Tab onClick={() => handleChangeFilter(i + 1)} key={i}>
+                                    <Tab onClick={() => setFilteringTag(i + 1)} key={i}>
                                         {tag}
                                     </Tab>
                                 ))}
@@ -149,29 +141,36 @@ export default function Home() {
                                 <TabPanel>
                                     <SimpleGrid spacing="15px" minChildWidth="250px">
                                         {articles.map((article, i) => (
-                                            <Box onClick={() => handleChangePage(i)} key={article.id}>
-                                                <ArticleCard
-                                                    thumbnail_path={article.images.length > 0 ? article.images[0].path : undefined}
-                                                    tag={article.tag}
-                                                    tagColor={tagColorMap.get(article.tag)}
-                                                    date={article.date}
-                                                    title={article.title}
-                                                />
+                                            <Box position="relative">
+                                                <Box onClick={() => setSelectedArticleIndex(i)} >
+                                                    <ArticleCard
+                                                        thumbnail_path={article.images.length > 0 ? article.images[0].path : undefined}
+                                                        tag={article.tag}
+                                                        tagColor={tagColorMap.get(article.tag)}
+                                                        date={article.date}
+                                                        title={article.title}
+                                                    />
+                                                </Box>
+                                                {isLoggedIn && isAdmin && (
+                                                    <Box>
+                                                        <Box position="absolute" top={-3} right={2}>
+                                                            <DeleteArticleButton articleId={article.id}/>
+                                                        </Box>
+                                                        <Box position="absolute" top={-3} right={12}>
+                                                            <EditArticleButton
+                                                                tagColorMap={tagColorMap}
+                                                                articleId={article.id}
+                                                            />
+                                                        </Box>
+                                                    </Box>
+                                                )}
                                             </Box>
                                         ))}
 
-                                        {/* 空の要素 */}
-                                        <Box aspectRatio={1}></Box> 
-                                        <Box aspectRatio={1}></Box>
-                                        <Box aspectRatio={1}></Box>
-                                        <Box aspectRatio={1}></Box>
-                                        <Box aspectRatio={1}></Box>
-                                        <Box aspectRatio={1}></Box>
-                                        <Box aspectRatio={1}></Box>
-                                        <Box aspectRatio={1}></Box>
-                                        <Box aspectRatio={1}></Box>
-                                        <Box aspectRatio={1}></Box>
-                                        <Box aspectRatio={1}></Box>
+                                        {/* パディング */}
+                                        {Array.from({ length: 15 - articles.length }).map(() => (
+                                            <Box w="250px" aspectRatio={1}></Box>
+                                        ))}
                                     </SimpleGrid>
                                 </TabPanel>
 
@@ -184,32 +183,31 @@ export default function Home() {
                                                     // フィルタを適用
                                                     if (article.tag == tag) {
                                                         return (
-                                                            <Box onClick={() => handleChangePage(j)} key={article.id}>
-                                                                <ArticleCard
-                                                                    thumbnail_path={article.images.length > 0 ? article.images[0].path : undefined}
-                                                                    tag={article.tag}
-                                                                    tagColor={color}
-                                                                    date={article.date}
-                                                                    title={article.title}
-                                                                />
+                                                            <Box position="relative">
+                                                                <Box onClick={() => setSelectedArticleIndex(j)} >
+                                                                    <ArticleCard
+                                                                        thumbnail_path={article.images.length > 0 ? article.images[0].path : undefined}
+                                                                        tag={article.tag}
+                                                                        tagColor={color}
+                                                                        date={article.date}
+                                                                        title={article.title}
+                                                                    />
+                                                                </Box>
+                                                                {isLoggedIn && isAdmin && (
+                                                                    <Box position="absolute" top={0} right={0}>
+                                                                            <DeleteArticleButton articleId={article.id}/>
+                                                                    </Box>
+                                                                )}
                                                             </Box>
                                                         )
                                                     }
                                                 })()
                                             ))}
 
-                                            {/* 空の要素 */}
-                                            <Box aspectRatio={1}></Box>
-                                            <Box aspectRatio={1}></Box>
-                                            <Box aspectRatio={1}></Box>
-                                            <Box aspectRatio={1}></Box>
-                                            <Box aspectRatio={1}></Box>
-                                            <Box aspectRatio={1}></Box>
-                                            <Box aspectRatio={1}></Box>
-                                            <Box aspectRatio={1}></Box>
-                                            <Box aspectRatio={1}></Box>
-                                            <Box aspectRatio={1}></Box>
-                                            <Box aspectRatio={1}></Box>
+                                            {/* パディング */}
+                                            {Array.from({ length: 15 - articles.filter(article => article.tag == tag).length }).map(() => (
+                                                <Box w="250px" aspectRatio={1}></Box>
+                                            ))}
                                         </SimpleGrid>
                                     </TabPanel>
                                 ))}
@@ -220,35 +218,34 @@ export default function Home() {
 
                 {/* 作品紹介ページ */}
                 {
-                    currentWorkPage != -1 &&
-
+                    selectedArticleIndex != -1 &&
                     <Box className={styles.content}>
                         <Box p={2} bg={Theme.color.backgroundA}>
                             <HStack w="100%">
                                 <Tag
                                     borderRadius="full"
                                     variant="solid"
-                                    colorScheme={tagColorMap.get(articles[currentWorkPage].tag)}
+                                    colorScheme={tagColorMap.get(articles[selectedArticleIndex].tag)}
                                     mr="auto" mb="auto"
                                 >
-                                    <TagLabel>{articles[currentWorkPage].tag}</TagLabel>
+                                    <TagLabel>{articles[selectedArticleIndex].tag}</TagLabel>
                                 </Tag>
-                                <Heading color={Theme.color.main}>{articles[currentWorkPage].title}</Heading>
-                                <CloseButton ml="auto" mb="auto" onClick={() => handleChangePage(-1)} />
+                                <Heading color={Theme.color.main}>{articles[selectedArticleIndex].title}</Heading>
+                                <CloseButton ml="auto" mb="auto" onClick={() => setSelectedArticleIndex(-1)} />
                             </HStack>
                         </Box>
                         <Divider
                             boxShadow="0px 2px 4px rgba(0, 0, 0, 0.5)"
                         />
 
-                        {articles[currentWorkPage].images.length > 0 &&
+                        {articles[selectedArticleIndex].images.length > 0 &&
                             <Box h="350px" p={4} bg={Theme.color.backgroundB}>
-                                <SlideShow imageList={articles[currentWorkPage].images} />
+                                <SlideShow imageList={articles[selectedArticleIndex].images} />
                             </Box>
                         }
 
-                        <Box h="350px" p={4} bg={Theme.color.backgroundA}>
-                            <Box dangerouslySetInnerHTML={{ __html: articles[currentWorkPage].body }} />
+                        <Box h="350px" p={4} bg={Theme.color.backgroundA} className={styles.markdown}>
+                            <Box dangerouslySetInnerHTML={{ __html: articles[selectedArticleIndex].body }} />
                         </Box>
 
                         {/* コメント機能追加するよ */}

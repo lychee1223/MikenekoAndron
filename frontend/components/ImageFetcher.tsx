@@ -6,7 +6,7 @@ const ImageFetcher = (props: any) => {
 
     useEffect(() => {
         const fetchImage = async () => {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/images/${encodeURIComponent(props.path)}`);
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/images?path=${encodeURIComponent(props.path)}`);
             if (!res.ok) {
                 return
             }
