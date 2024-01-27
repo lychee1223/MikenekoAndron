@@ -59,4 +59,9 @@ class ArticleCreate(BaseModel):
     date: datetime
     title: str
     body: str
-    # images: list[UploadFile] = []
+
+class ArticleUpdate(BaseModel):
+    tag: str
+    date: datetime
+    title: str
+    body: str

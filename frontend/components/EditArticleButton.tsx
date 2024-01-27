@@ -12,6 +12,7 @@ import {
     TagLabel,
     SimpleGrid,
     Button,
+    IconButton,
     CloseButton,
     FormControl,
     FormLabel,
@@ -29,24 +30,38 @@ import {
     AspectRatio,
     HStack,
     Flex,
-    IconButton,
 } from "@chakra-ui/react"
 
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { BsPencilSquare } from "react-icons/bs";
 import { MdOutlineFileUpload } from "react-icons/md";
-import { HiPlus } from "react-icons/hi";
 
 import Theme from "@/components/Theme";
 import React from 'react';
 
-interface Props {
-    tagColorMap: Map<string, string>;
-    isWorks: boolean;
+type Image = {
+    id: number
+    path: string
 }
 
-function CreateArticleButton(props: Props) {
+type Article = {
+    id: number
+    is_works: boolean
+    tag: string
+    date: String
+    title: string
+    body: string
+    images: Image[]
+}
+
+interface Props {
+    tagColorMap: Map<string, string>;
+    articleId: number;
+}
+
+function EditArticleButton(props: Props) {
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState('')
@@ -57,12 +72,47 @@ function CreateArticleButton(props: Props) {
 
     // 画像を入力するInputのRefと画像のリスト
     const fileInputRef = React.useRef<HTMLInputElement>(null);
+    const [article, setArticle] = useState<Article>();
     const [images, setImages] = useState<File[]>([]);
 
     // Modalを開いた際の処理
     useEffect(() =>{
         setErrorMessage('');
-        setImages([])
+
+        // 記事の初期値を設定
+        const fetchArticle = async () => {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/articles/${props.articleId}`);
+            if (!res.ok) {
+                const error = await res.json();
+                setErrorMessage(error.detail);
+                return
+            }
+            const data = await res.json();
+            setArticle(data)
+        };
+
+        // 画像の初期値を設定
+        const initializeImages = async (article: Article) => {
+            const fetchImage = async (path: string) => {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/images?path=${encodeURIComponent(path)}`);
+                if (!res.ok) {
+                    const error = await res.json();
+                    setErrorMessage(error.detail);
+                    return
+                }
+                const data = await res.blob();
+                return new File([data], path);
+            };
+            const fetchedImages = await Promise.all(article.images.map((image) => fetchImage(image.path)));
+
+            // 画像をリストに追加
+            setImages(fetchedImages.filter((image) => image !== null) as File[]);
+        };
+
+        fetchArticle();
+        if (article){
+            initializeImages(article);
+        }
     }, [isOpen])
 
     // アップロードする画像をリストに追加
@@ -73,7 +123,7 @@ function CreateArticleButton(props: Props) {
         }
 
         // 画像の選択をリセット
-        const input = document.getElementById('createImagesInput') as HTMLInputElement;
+        const input = document.getElementById('images') as HTMLInputElement;
         input.value = '';
     };
 
@@ -82,8 +132,8 @@ function CreateArticleButton(props: Props) {
         setImages((prevImages) => prevImages.filter((_, i) => i !== index));
     };
 
-    // 記事と画像をサーバにアップロード
-    const createArticle = async (event: React.FormEvent<HTMLFormElement>) => {
+    // 記事と画像を更新
+    const editArticle = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         setIsLoading(true);
@@ -99,14 +149,13 @@ function CreateArticleButton(props: Props) {
         const isoFormattedDate = currentDate.toISOString();
 
         // 記事の作成
-        const articleRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/articles`, {
-            method: 'POST',
+        const articleRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/articles?id=${props.articleId}`, {
+            method: 'PUT',
             headers: {
                 Authorization: `Bearer ${Cookies.get('access_token')}`,
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                is_works: String(props.isWorks),
                 tag: target.tag.value,
                 date: isoFormattedDate,
                 title: target.title.value,
@@ -121,30 +170,25 @@ function CreateArticleButton(props: Props) {
             return;
         }
 
-        const articleData = await articleRes.json();
-        const articleId = articleData.id; // 記事のIDを取得
-
         // 画像のアップロード
-        if (images.length > 0) {
-            const formData = new FormData();
-            images.forEach((image) => {
-                formData.append('images', image);
-            });
+        const formData = new FormData();
+        images.forEach((image) => {
+            formData.append('images', image);
+        });
 
-            const imageRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/images?article_id=${articleId}`, {
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${Cookies.get('access_token')}`,
-                },
-                body: formData,
-            });
+        const imageRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/images?article_id=${props.articleId}`, {
+            method: 'PUT',
+            headers: {
+                Authorization: `Bearer ${Cookies.get('access_token')}`,
+            },
+            body: images.length > 0 ? formData : undefined,
+        });
 
-            if (!imageRes.ok) {
-                const error = await imageRes.json();
-                setErrorMessage(error.detail);
-                setIsLoading(false);
-                return;
-            }
+        if (!imageRes.ok) {
+            const error = await imageRes.json();
+            setErrorMessage(error.detail);
+            setIsLoading(false);
+            return;
         }
 
         router.reload();
@@ -154,16 +198,13 @@ function CreateArticleButton(props: Props) {
         <>
             <IconButton
                 onClick={onOpen}
-                aria-label="CreateArticle"
-                position='fixed' bottom='20px' right='20px'
-                size="md"
+                aria-label="EditArticle"
+                size="sm"
                 borderRadius='full'
-                bg={Theme.color.main}
-                color='white' _hover={{ filter: 'brightness(90%)' }} _active={{ filter: 'brightness(80%)' }}
-                icon={<HiPlus />}
-            >
-                <Text>+</Text>
-            </ IconButton>
+                bg={Theme.color.main} _hover={{ filter: 'brightness(90%)' }} _active={{ filter: 'brightness(80%)' }}
+                color="white" fontSize={16}
+                icon={<BsPencilSquare />}
+            />
 
             {/* 作品作成モーダル */}
             <Modal
@@ -175,10 +216,10 @@ function CreateArticleButton(props: Props) {
             >
                 <ModalOverlay />
                 <ModalContent maxW="lg">
-                    <ModalHeader>新規記事を作成</ModalHeader>
+                    <ModalHeader>記事を作成</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody pb={6}>
-                        <form onSubmit={createArticle} encType="multipart/form-data">
+                        <form onSubmit={editArticle} encType="multipart/form-data">
                             <Stack w="100%">
                                 {errorMessage && (
                                     <Alert status="error">
@@ -191,20 +232,26 @@ function CreateArticleButton(props: Props) {
                                     <Input
                                         ref={initialRef}
                                         type="text"
-                                        name="title" id="createTitleInput"
+                                        name="title" id="title"
+                                        defaultValue={article && article.title}
                                         onChange={() => setErrorMessage('')}
                                     />
                                 </FormControl>
                                 <FormControl isRequired>
                                     <FormLabel>本文</FormLabel>
                                     <Textarea
-                                        name="body" id="createBodyInput"
+                                        name="body" id="body"
+                                        defaultValue={article && article.body}
                                         onChange={() => setErrorMessage('')}
                                     />
                                 </FormControl>
                                 <FormControl isRequired>
                                     <FormLabel>タグ</FormLabel>
-                                    <Select name="tag" id="createTagSelect" width="100px">
+                                    <Select
+                                        name="tag" id="tag"
+                                        defaultValue={article && article.tag}
+                                        width="100px"
+                                    >
                                     {Array.from(props.tagColorMap.entries()).map(([tag, color], i) => (
                                         <option key={tag} value={tag}>
                                             {tag}
@@ -216,7 +263,7 @@ function CreateArticleButton(props: Props) {
                                     <FormLabel pointerEvents="none">画像をアップロード</FormLabel>
                                     <Input
                                         type="file" multiple
-                                        name="iamges" id="createImagesInput"
+                                        name="iamges" id="images"
                                         accept="image/*"
                                         ref={fileInputRef}
                                         onChange={addImage}
@@ -272,7 +319,7 @@ function CreateArticleButton(props: Props) {
                                     </SimpleGrid>
                                 </FormControl>
                                 <Button type="submit" colorScheme={Theme.color.colorScheme} isLoading={isLoading}>
-                                    アップロード
+                                    記事をアップロード
                                 </Button>
                             </Stack>
                         </form>
@@ -283,4 +330,4 @@ function CreateArticleButton(props: Props) {
     )
 }
 
-export default CreateArticleButton;
+export default EditArticleButton;

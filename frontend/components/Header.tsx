@@ -82,7 +82,16 @@ const Header = (props: any) =>{
                         {/* ログイン、ログアウトボタン */}
                         <Box>
                             {props.isLoggedIn ? (
-                                <Button onClick={logout} width='110px'>ログアウト</Button>
+                                <Button
+                                    onClick={logout}
+                                    size='md'
+                                    width='110px'
+                                    variant='outline'
+                                    _hover={{ bg: 'gray.200'}}
+                                    _active={{ filter: 'brightness(90%)' }}
+                                >
+                                    ログアウト
+                                </Button>
                             ) : (
                                 <LoginButton />
                             )}

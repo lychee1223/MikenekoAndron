@@ -9,14 +9,17 @@ import {
     Text,
     Tag,
     TagLabel,
-    AspectRatio
+    AspectRatio,
+    Button,
 } from "@chakra-ui/react"
+
+import { useState } from 'react'
 
 import Theme from "@/components/Theme";
 import ImageFetcher from "@/components/ImageFetcher";
 
 function ArticleCard(props: any) {
-    // 画像が紐づいていない記事のパス
+    // 画像が紐づいていない記事のサムネイル
     const defaultImagePath = "/img/default_thumbnail.png";
 
     return (
@@ -24,7 +27,7 @@ function ArticleCard(props: any) {
                 <Card p={1} aspectRatio={1} bg={Theme.color.backgroundC}>
                     <CardBody>
                         {/* サムネ */}
-                        <AspectRatio ratio={10/6}>
+                        <AspectRatio ratio={ 16 / 9 }>
                             {props.thumbnail_path ? (
                                 <ImageFetcher 
                                     path={props.thumbnail_path}
@@ -39,7 +42,7 @@ function ArticleCard(props: any) {
                         </AspectRatio>
 
                         {/* 見出し */}
-                        <Box h="40%" pt={2}>
+                        <Box h="45%" pt={2}>
                             <VStack>
                                 <HStack w="100%">
                                     {/* タグ */}
