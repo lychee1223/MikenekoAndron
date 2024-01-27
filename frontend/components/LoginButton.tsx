@@ -151,8 +151,12 @@ const Login = (props: any) =>{
                                             ref={initialRef}
                                             type="text"
                                             name="username"
+                                            pattern="[a-zA-Z0-9]+"
                                             onChange={() => setErrorMessage('')}
                                         />
+                                        <Text fontSize="sm" color="gray.500" mt={2}>
+                                            半角英数字
+                                        </Text>
                                     </FormControl>
                                     <FormControl isRequired>
                                         <FormLabel>Password</FormLabel>
@@ -160,6 +164,7 @@ const Login = (props: any) =>{
                                             <Input
                                                 type={showPass ? 'text' : 'password'}
                                                 name="password"
+                                                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[!-~]{8,32}$"
                                                 onChange={() => setErrorMessage('')}
                                             />
                                             <InputRightElement>
@@ -171,6 +176,10 @@ const Login = (props: any) =>{
                                                 />
                                             </InputRightElement>
                                         </InputGroup>
+                                        <Text fontSize="sm" color="gray.500" mt={2}>
+                                            半角英数字・記号のみ、8文字以上32字以下<br />
+                                            ※ 小文字・大文字・数字をそれぞれ1文字以上含む
+                                        </Text>
                                     </FormControl>
                                     <Button type="submit" colorScheme={Theme.color.colorScheme} isLoading={isLoading}>
                                         ログイン
@@ -214,8 +223,12 @@ const Login = (props: any) =>{
                                             ref={initialRef}
                                             type="text"
                                             name="username"
+                                            pattern="[a-zA-Z0-9]+"
                                             onChange={() => setErrorMessage('')}
                                         />
+                                        <Text fontSize="sm" color="gray.500" mt={2}>
+                                            半角英数字
+                                        </Text>
                                     </FormControl>
                                     <FormControl isRequired>
                                         <FormLabel>Password</FormLabel>
@@ -223,6 +236,7 @@ const Login = (props: any) =>{
                                             <Input
                                                 type={showPass ? 'text' : 'password'}
                                                 name="password"
+                                                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[!-~]{8,32}$"
                                                 onChange={() => setErrorMessage('')}
                                             />
                                             <InputRightElement>
@@ -234,6 +248,10 @@ const Login = (props: any) =>{
                                                 />
                                             </InputRightElement>
                                         </InputGroup>
+                                        <Text fontSize="sm" color="gray.500" mt={2}>
+                                            半角英数字・記号のみ、8文字以上32字以下<br />
+                                            ※ 小文字・大文字・数字をそれぞれ1文字以上含む
+                                        </Text>
                                     </FormControl>
                                     <Button type="submit" colorScheme={Theme.color.colorScheme} isLoading={isLoading}>
                                         アカウントを作成
