@@ -141,7 +141,7 @@ export default function Home() {
                                 <TabPanel>
                                     <SimpleGrid spacing="15px" minChildWidth="250px">
                                         {articles.map((article, i) => (
-                                            <Box position="relative">
+                                            <Box key={i} position="relative">
                                                 <Box onClick={() => setSelectedArticleIndex(i)} >
                                                     <ArticleCard
                                                         thumbnail_path={article.images.length > 0 ? article.images[0].path : undefined}
@@ -168,8 +168,8 @@ export default function Home() {
                                         ))}
 
                                         {/* パディング */}
-                                        {Array.from({ length: 15 - articles.length }).map(() => (
-                                            <Box w="250px" aspectRatio={1}></Box>
+                                        {Array.from({ length: 15 - articles.length }).map((_, i) => (
+                                            <Box key={15 + i} w="250px" aspectRatio={1}></Box>
                                         ))}
                                     </SimpleGrid>
                                 </TabPanel>
@@ -205,8 +205,8 @@ export default function Home() {
                                             ))}
 
                                             {/* パディング */}
-                                            {Array.from({ length: 15 - articles.filter(article => article.tag == tag).length }).map(() => (
-                                                <Box w="250px" aspectRatio={1}></Box>
+                                            {Array.from({ length: 15 - articles.filter(article => article.tag == tag).length }).map((_, i) => (
+                                                <Box key={15 + i} w="250px" aspectRatio={1}></Box>
                                             ))}
                                         </SimpleGrid>
                                     </TabPanel>

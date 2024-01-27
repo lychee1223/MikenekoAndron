@@ -266,8 +266,8 @@ function CreateArticleButton(props: Props) {
                                             <MdOutlineFileUpload />
                                         </Button>
                                         {/* パディング */}
-                                        {Array.from({ length: 4 - images.length }).map(() => (
-                                            <Box w="80px" aspectRatio={16 / 9}></Box>
+                                        {Array.from({ length: 4 - images.length }).map((_, i) => (
+                                            <Box key={4 + i} w="80px" aspectRatio={16 / 9}></Box>
                                         ))}
                                     </SimpleGrid>
                                 </FormControl>
