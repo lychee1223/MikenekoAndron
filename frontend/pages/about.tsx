@@ -44,7 +44,7 @@ export default function Home() {
         {
             header: "Python",
             icon: <FaPython size="50%" />,
-            body: "PyTorchを用いた自然言語処理マスターする予定"
+            body: "PyTorchを用いた機械学習"
         },
     ];
 
@@ -100,9 +100,9 @@ export default function Home() {
                             />
                             <VStack h="100%" w="50%" spacing={1} justify="center">
                                 <Heading size="3xl" mb={5} mr="auto" color={Theme.color.main}>川田 拓朗</Heading>
-                                <Text mr="auto">所　　属：法政大学 理工学部 応用情報工学科</Text>
-                                <Text mr="auto">　　　　　知的情報処理研究室(彌冨研究室)</Text>
-                                <Text mr="auto">サークル：計算技術研究会</Text>
+                                <Text mr="auto">所属：法政大学 理工学部 応用情報工学科</Text>
+                                <Text mr="auto">　　　知的情報処理研究室(彌冨研究室)</Text>
+                                <Text mr="auto">email：takuro.kawada.3g@stu.hosei.ac.jp</Text>
                             </VStack>
                         </HStack>
                     </Box>
